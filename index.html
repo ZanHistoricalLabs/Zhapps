@@ -391,7 +391,10 @@
                                     <option value="Expense" class="text-rose-400">Expense (-)</option>
                                 </select>
                             </div>
-                            <div>
+                            <div><div class="mb-4">
+    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Transaction Date</label>
+    <input type="date" id="fin-ledger-date" class="w-full bg-slate-900 text-white rounded-lg border border-slate-700 p-3 text-sm focus:outline-none focus:border-amber-500">
+</div>
                                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Amount (IDR / Rupiah)</label>
                                 <input type="number" id="fin-amount" required placeholder="500000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 transition">
                             </div>
@@ -404,16 +407,29 @@
 
                     <!-- List and running statements -->
                     <div class="lg:col-span-2 bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden">
-                        <div class="p-6 border-b border-slate-800 flex justify-between items-center">
-                            <div>
-                                <h3 class="text-lg font-bold">Rupiah Balance Statement</h3>
-                                <p class="text-xs text-slate-400">Your current track record of liquid cash flow assets.</p>
-                            </div>
-                            <div class="text-right">
-                                <p class="text-xs text-slate-400">Ledger Net Balance</p>
-                                <h4 class="text-lg font-extrabold text-amber-400" id="fin-ledger-net-total">Rp 0</h4>
-                            </div>
-                        </div>
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+    <div>
+        <h3 class="text-xl font-bold text-white">Rupiah Balance Statement</h3>
+        <p class="text-sm text-slate-400">Your current track record of liquid cash flow assets.</p>
+    </div>
+    <!-- Filter Kalender Harian -->
+    <div class="flex items-center gap-2 bg-slate-800 p-2 rounded-lg border border-slate-700">
+        <label for="ledgerDateFilter" class="text-xs text-slate-400 font-medium">Select Date:</label>
+        <input type="date" id="ledgerDateFilter" class="bg-slate-900 text-white text-xs rounded p-1 border border-slate-600 focus:outline-none focus:border-amber-500">
+    </div>
+</div>
+
+<!-- Kartu Ringkasan Terpisah: Harian vs Bulanan -->
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+        <p class="text-xs text-slate-400 uppercase font-semibold tracking-wider">Daily Net Balance (Selected Date)</p>
+        <h4 id="dailyNetBalance" class="text-xl font-bold text-emerald-400 mt-1">Rp 0</h4>
+    </div>
+    <div class="bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+        <p class="text-xs text-slate-400 uppercase font-semibold tracking-wider">Monthly Net Balance (Current Month)</p>
+        <h4 id="monthlyNetBalance" class="text-xl font-bold text-blue-400 mt-1">Rp 0</h4>
+    </div>
+</div>
                         
                         <div class="overflow-y-auto max-h-[400px]">
                             <table class="w-full text-left border-collapse">
@@ -926,64 +942,104 @@
             const amount = parseFloat(document.getElementById('fin-amount').value);
 
             const newFin = {
-                id: Date.now(),
-                title,
-                type,
-                amount,
-                date: new Date().toISOString()
-            };
+            id: Date.now(),
+            title,
+            type,
+            amount,
+            date: document.getElementById('fin-ledger-date').value || new Date().toISOString().split('T')[0]
+        };
 
             STATE.finance.unshift(newFin);
             saveState();
             document.getElementById('fin-title').value = "";
             document.getElementById('fin-amount').value = "";
+            document.getElementById('fin-ledger-date').value = new Date().toISOString().split('T')[0];
             renderFinanceLedger();
             alert("Ledger harian rupiah diperbarui!");
         }
 
         function renderFinanceLedger() {
-            const tbody = document.getElementById('finance-ledger-body');
-            tbody.innerHTML = "";
+    const filterDateInput = document.getElementById("ledgerDateFilter");
+    
+    // Set default ke tanggal hari ini jika filter kalender kosong
+    if (filterDateInput && !filterDateInput.value) {
+        const today = new Date().toISOString().split('T')[0];
+        filterDateInput.value = today;
+    }
+    
+    const selectedDate = filterDateInput ? filterDateInput.value : "";
+    const currentMonth = selectedDate.substring(0, 7); // Format YYYY-MM
 
-            let totalIncome = 0;
-            let totalExpense = 0;
+    let dailyNet = 0;
+    let monthlyNet = 0;
+    
+    const tbody = document.getElementById('finance-ledger-body');
+    if (tbody) tbody.innerHTML = "";
 
-            STATE.finance.forEach(item => {
-                if (item.type === "Income") {
-                    totalIncome += item.amount;
-                } else {
-                    totalExpense += item.amount;
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-900/40 transition duration-150";
-                tr.innerHTML = `
-                    <td class="px-6 py-4 font-semibold text-slate-100">
-                        ${item.title}
-                        <div class="text-[10px] text-slate-500 font-medium mt-1">${new Date(item.date).toLocaleDateString()}</div>
-                    </td>
-                    <td class="px-6 py-4">
-                        <span class="text-xs font-bold ${item.type === 'Income' ? 'text-emerald-400' : 'text-rose-400'}">${item.type.toUpperCase()}</span>
-                    </td>
-                    <td class="px-6 py-4 text-right font-extrabold ${item.type === 'Income' ? 'text-emerald-400' : 'text-rose-400'}">
-                        ${item.type === 'Income' ? '+' : '-'} Rp ${item.amount.toLocaleString('id-ID')}
-                    </td>
-                    <td class="px-6 py-4 text-right">
-                        <button onclick="deleteFinance(${item.id})" class="text-xs text-rose-500 hover:text-rose-400 font-bold transition">Delete</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-
-            const netBalance = totalIncome - totalExpense;
-            const balanceEl = document.getElementById('fin-ledger-net-total');
-            balanceEl.innerText = `Rp ${netBalance.toLocaleString('id-ID')}`;
-            if (netBalance >= 0) {
-                balanceEl.className = "text-lg font-extrabold text-emerald-400";
-            } else {
-                balanceEl.className = "text-lg font-extrabold text-rose-400";
-            }
+    // 1. Kalkulasi Logika Harian & Bulanan
+    STATE.finance.forEach(item => {
+        const itemAmount = parseFloat(item.amount) || 0;
+        const isIncome = item.type === "Income";
+        
+        // Akumulasi Bulanan
+        if (item.date && item.date.startsWith(currentMonth)) {
+            monthlyNet += isIncome ? itemAmount : -itemAmount;
         }
+        
+        // Akumulasi Harian
+        if (item.date === selectedDate) {
+            dailyNet += isIncome ? itemAmount : -itemAmount;
+        }
+
+        // 2. Render baris tabel HANYA untuk tanggal yang dipilih
+        if (item.date === selectedDate && tbody) {
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-900/40 transition duration-150 border-b border-slate-800/60 text-sm";
+            tr.innerHTML = `
+                <td class="px-6 py-4 font-semibold text-slate-100">
+                    ${item.title}
+                    <div class="text-[10px] text-slate-500 font-medium">${item.date}</div>
+                </td>
+                <td class="px-6 py-4">
+                    <span class="text-xs font-bold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">${item.type}</span>
+                </td>
+                <td class="px-6 py-4 text-right font-extrabold ${isIncome ? 'text-emerald-400' : 'text-rose-400'}">
+                    ${isIncome ? '+' : '-'} Rp ${itemAmount.toLocaleString('id-ID')}
+                </td>
+                <td class="px-6 py-4 text-right">
+                    <button onclick="deleteFinance(${item.id})" class="text-rose-500 hover:text-rose-400 text-xs">Delete</button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+        }
+    });
+
+    // Jika di hari tersebut tidak ada transaksi sama sekali
+    if (tbody && tbody.innerHTML === "") {
+        tbody.innerHTML = `<tr><td colspan="4" class="text-center py-6 text-slate-500 text-xs">No financial transactions recorded for this date.</td></tr>`;
+    }
+
+    // 3. Tampilkan hasil kalkulasi ke UI Widget Baru
+    const dailyEl = document.getElementById("dailyNetBalance");
+    const monthlyEl = document.getElementById("monthlyNetBalance");
+    
+    if (dailyEl) {
+        dailyEl.innerText = (dailyNet >= 0 ? "Rp " : "-Rp ") + Math.abs(dailyNet).toLocaleString('id-ID');
+        dailyEl.className = `text-xl font-bold mt-1 ${dailyNet >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+    }
+    if (monthlyEl) {
+        monthlyEl.innerText = (monthlyNet >= 0 ? "Rp " : "-Rp ") + Math.abs(monthlyNet).toLocaleString('id-ID');
+        monthlyEl.className = `text-xl font-bold mt-1 ${monthlyNet >= 0 ? 'text-blue-400' : 'text-rose-400'}`;
+    }
+}
+
+// Tambah listener agar ketika tanggal diubah, data otomatis ter-update secara real-time
+setTimeout(() => {
+    const filterDateInput = document.getElementById("ledgerDateFilter");
+    if (filterDateInput) {
+        filterDateInput.addEventListener("change", renderFinanceLedger);
+    }
+}, 200);
 
         function deleteFinance(id) {
             if (confirm("Hapus pencatatan pengeluaran/pendapatan ini?")) {
