@@ -244,6 +244,10 @@
                                 <div id="calc-rr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 font-medium">
                                     Auto Calculating...
                                 </div>
+                                <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">LOT SIZE</label>
+        <input type="text" id="trade-lot" placeholder="0.10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
+    </div>
                             </div>
                         </div>
 
@@ -690,6 +694,7 @@
             const entry = parseFloat(document.getElementById('trade-entry').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
             const sl = parseFloat(document.getElementById('trade-sl').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
             const tp = parseFloat(document.getElementById('trade-tp').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
+            const lot = parseFloat(document.getElementById('trade-lot').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
             const status = document.getElementById('trade-status').value;
             const fundamental = document.getElementById('trade-fundamental').value;
             const confluence = document.getElementById('trade-confluence').value;
@@ -733,7 +738,7 @@
                 pipsSL: pipsSl,
                 pipsTP: pipsTp,
                 rr: parseFloat(rr.toFixed(2)),
-                lots: parseFloat(calculatedLots.toFixed(2)),
+                lots: lot,
                 profit: parseFloat(finalProfit.toFixed(2)),
                 date: new Date().toISOString()
             };
