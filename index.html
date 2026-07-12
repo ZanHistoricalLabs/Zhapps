@@ -807,13 +807,7 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end space-x-2">
-                            <select onchange="updateTradeStatus(${t.id}, this.value)" class="bg-slate-950 border border-slate-800 text-[10px] rounded p-1 text-slate-300">
-                                <option value="">Alter State...</option>
-                                <option value="Active">Open / Floating</option>
-                                <option value="Won">Won (TP)</option>
-                                <option value="Lost">Lost (SL)</option>
-                                <option value="Breakeven">Breakeven (BE)</option>
-                            </select>
+                            
                             <button onclick="deleteTrade(${t.id})" class="p-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-lg transition" title="Purge Record">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
