@@ -226,7 +226,7 @@
                         </div>
 
                         <!-- Row 2: Entry, Sl, Tp & automatic Risk Calculation -->
-                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
                             <div>
                                 <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Entry Price</label>
                                 <input type="number" step="any" id="trade-entry" required placeholder="1.08500" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-indigo-500 transition">
@@ -244,7 +244,10 @@
                                 <div id="calc-rr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 font-medium">
                                     Auto Calculating...
                                 </div>
-                            </div>
+                            </div><div>
+    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Lot Size</label>
+    <input type="number" step="any" id="trade-lot" required placeholder="0.10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
+</div>
                         </div>
 
                         <!-- Info Box: Auto-Calculated Risk & Safe Lot-Size allocation -->
@@ -258,10 +261,7 @@
                                     <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Total Allowed Risk</p>
                                     <p class="text-lg font-extrabold text-indigo-400" id="calc-risk-usd">$0.00</p>
                                 </div>
-                                <div class="text-right border-l border-indigo-500/20 pl-4">
-                                    <p class="text-[10px] uppercase font-bold tracking-wider text-slate-400">Calculated Lot Size</p>
-                                    <p class="text-lg font-extrabold text-emerald-400" id="calc-safe-lots">0.00 Lots</p>
-                                </div>
+                            
                             </div>
                         </div>
 
