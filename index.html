@@ -1072,7 +1072,7 @@ setTimeout(() => {
             const lostTrades = STATE.trades.filter(t => t.status === "Lost").length;
             const winRate = totalTrades > 0 ? (wonTrades / (wonTrades + lostTrades || 1)) * 100 : 0;
 
-            const currentEquity = parseFloat(STATE.settings.startingBalance) + STATE.trades.reduce((sum, t) => sum + parseFloat(t.profit), 0);
+            const currentEquity = parseFloat(STATE.settings.startingBalance) + STATE.trades.reduce((sum, t) => sum + (t.status === "Lost" ? -parseFloat(t.profit) : parseFloat(t.profit)), 0);
 
             let rupiahCash = STATE.finance.reduce((sum, f) => {
                 return sum + (f.type === "Income" ? f.amount : -f.amount);
