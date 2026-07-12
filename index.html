@@ -83,9 +83,12 @@
                     <p class="text-xs text-slate-400">Welcome back,</p>
                     <p class="text-sm font-semibold text-indigo-400" id="nav-username">Zan</p>
                 </div>
-                <div class="h-8 w-8 rounded-full bg-slate-800 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm">
-                    Z
-                </div>
+                <div class="relative group cursor-pointer" onclick="document.getElementById('avatar-input').click()">
+    <input type="file" id="avatar-input" accept="image/*" class="hidden" onchange="uploadAvatar(this)">
+    <div id="avatar-container" class="h-8 w-8 rounded-full bg-slate-800 border border-indigo-500/30 flex items-center justify-center text-indigo-400 font-bold text-sm overflow-hidden bg-cover bg-center">
+        <span id="avatar-text">Z</span>
+    </div>
+</div>
             </div>
         </div>
     </header>
@@ -1232,12 +1235,40 @@ setTimeout(() => {
             URL.revokeObjectURL(url);
         }
 
+        // Fungsi memproses upload foto dari galeri
+function uploadAvatar(input) {
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            localStorage.setItem('user_avatar', base64Image);
+            applyAvatar(base64Image);
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+// Fungsi menerapkan foto ke lingkaran profil
+function applyAvatar(imageData) {
+    const container = document.getElementById('avatar-container');
+    const text = document.getElementById('avatar-text');
+    if (imageData && container && text) {
+        container.style.backgroundImage = `url('${imageData}')`;
+        text.style.display = 'none'; // Sembunyikan huruf Z
+    }
+}
         // Initialize application logic on window complete load
         window.onload = function () {
-            document.getElementById('nav-username').innerText = STATE.settings.username;
-            lucide.createIcons();
-            switchTab('dashboard');
-        };
+    document.getElementById('nav-username').innerText = STATE.settings.username;
+    lucide.createIcons();
+    switchTab('dashboard');
+
+    // Cek dan terapkan foto profil yang tersimpan
+    const savedAvatar = localStorage.getItem('user_avatar');
+    if (savedAvatar) {
+        applyAvatar(savedAvatar);
+    }
+};
     </script>
 </body>
 </html>
