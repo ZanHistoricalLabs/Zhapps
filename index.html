@@ -821,7 +821,10 @@
                     </td>
                     <td class="px-6 py-4 text-right">
                         <div class="flex items-center justify-end space-x-2">
-                            
+                           
+                            <button onclick="auditTradeWithAI(${t.id})" class="p-1.5 bg-indigo-500/10 text-indigo-400 hover:bg-indigo-500/20 rounded-lg transition" title="Audit Posisi dengan AI">
+    <i data-lucide="bot" class="w-4 h-4"></i>
+</button>
                             <button onclick="deleteTrade(${t.id})" class="p-1.5 bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 rounded-lg transition" title="Purge Record">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
@@ -1264,6 +1267,75 @@ function applyAvatar(imageData) {
     if (imageData && container && text) {
         container.style.backgroundImage = `url('${imageData}')`;
         text.style.display = 'none'; // Sembunyikan huruf Z
+    }
+}
+async function auditTradeWithAI(tradeId) {
+    // 1. Ambil API Key dari STATE
+    const apiKey = STATE.settings.geminiApiKey;
+    if (!apiKey) {
+        alert("Zan, lo belum masukin Gemini API Key di App Settings!");
+        switchTab('settings');
+        return;
+    }
+
+    // 2. Cari data trading berdasarkan ID
+    const trade = STATE.trades.find(t => t.id === tradeId);
+    if (!trade) return;
+
+    // Tampilkan loading sederhana di console atau UI (opsional)
+    console.log(`Mengaudit trade ID: ${tradeId} dengan Gemini AI...`);
+    
+    // 3. Susun prompt analisis yang skeptis, analitis, dan mengutamakan logika
+    const promptText = `
+    Kamu adalah AI Trading Auditor/Psychologist yang sangat kritis, skeptis, objektif, dan mengandalkan logika murni. 
+    Tugas Anda adalah mengaudit sebuah posisi trading yang dilakukan oleh seorang trader bernama Zan (Fokus: 70% Fundamental, 30% Teknikal).
+    
+    Berikut adalah data posisi trading yang diambil dari jurnal:
+    - Pair/Asset: ${trade.asset}
+    - Arah Posisi: ${trade.direction}
+    - Entry Price: ${trade.entryPrice}
+    - Stop Loss: ${trade.slPrice}
+    - Take Profit: ${trade.tpPrice}
+    - Status: ${trade.status}
+    - Narasi Analisis Fundamental (Katalis Makro): "${trade.fundamental || 'Tidak ada catatan'}"
+    - Konfluensi Teknikal: "${trade.confluence || 'Tidak ada catatan'}"
+    
+    Berikan audit kritis dalam bentuk poin-poin singkat namun tajam mengenai:
+    1. Logika di balik trade ini (Apakah bias emosional/FOMO atau objektif berdasarkan katalis?).
+    2. Rasionalitas Risk-to-Reward Ratio berdasarkan Entry, SL, dan TP yang dipasang.
+    3. Evaluasi akhir apakah manajemen trade ini sudah disiplin atau melanggar aturan logika trading yang ketat.
+    `;
+
+    // 4. Hitung endpoint API menggunakan model gemini-2.5-flash (Free & Fast)
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: promptText }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            const aiResponse = data.candidates[0].content.parts[0].text;
+            
+            // Tampilkan hasil audit menggunakan alert bawaan terlebih dahulu untuk tes
+            alert(`--- HASIL AUDIT AI UNTUK TRADING LO, ZAN --- \n\n${aiResponse}`);
+        } else {
+            alert("Gagal mendapatkan respons valid dari Gemini. Cek kembali kevalidan API Key lo, Zan.");
+        }
+
+    } catch (error) {
+        console.error("Error API Gemini:", error);
+        alert("Terjadi error koneksi saat mencoba menghubungi Gemini API.");
     }
 }
         // Initialize application logic on window complete load
