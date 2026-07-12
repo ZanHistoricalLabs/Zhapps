@@ -1270,76 +1270,59 @@ function applyAvatar(imageData) {
     }
 }
 async function auditTradeWithAI(tradeId) {
-    // 1. Ambil API Key dari STATE
-    const apiKey = STATE.settings.geminiApiKey;
-    if (!apiKey) {
-        alert("Zan, lo belum masukin Gemini API Key di App Settings!");
-        switchTab('settings');
+    console.log("Mengaudit trade ID:", tradeId, "dengan Gemini AI...");
+    
+    const trade = STATE.trades.find(t => t.id == tradeId);
+    if (!trade) {
+        alert("Data trade tidak ditemukan!");
         return;
     }
 
-    // 2. Cari data trading berdasarkan ID
-    const trade = STATE.trades.find(t => t.id === tradeId);
-    if (!trade) return;
+    const apiKey = STATE.settings?.geminiApiKey || localStorage.getItem('gemini_api_key');
+    if (!apiKey) {
+        alert("API Key Gemini belum diatur di Settings!");
+        return;
+    }
 
-    // Tampilkan loading sederhana di console atau UI (opsional)
-    console.log(`Mengaudit trade ID: ${tradeId} dengan Gemini AI...`);
-    
-    // 3. Susun prompt analisis yang skeptis, analitis, dan mengutamakan logika
-    const promptText = `
-    Kamu adalah AI Trading Auditor/Psychologist yang sangat kritis, skeptis, objektif, dan mengandalkan logika murni. 
-    Tugas Anda adalah mengaudit sebuah posisi trading yang dilakukan oleh seorang trader bernama Zan (Fokus: 70% Fundamental, 30% Teknikal).
-    
-    Berikut adalah data posisi trading yang diambil dari jurnal:
-    - Pair/Asset: ${trade.asset}
-    - Arah Posisi: ${trade.direction}
-    - Entry Price: ${trade.entryPrice}
-    - Stop Loss: ${trade.slPrice}
-    - Take Profit: ${trade.tpPrice}
-    - Status: ${trade.status}
-    - Narasi Analisis Fundamental (Katalis Makro): "${trade.fundamental || 'Tidak ada catatan'}"
-    - Konfluensi Teknikal: "${trade.confluence || 'Tidak ada catatan'}"
-    
-    Berikan audit kritis dalam bentuk poin-poin singkat namun tajam mengenai:
-    1. Logika di balik trade ini (Apakah bias emosional/FOMO atau objektif berdasarkan katalis?).
-    2. Rasionalitas Risk-to-Reward Ratio berdasarkan Entry, SL, dan TP yang dipasang.
-    3. Evaluasi akhir apakah manajemen trade ini sudah disiplin atau melanggar aturan logika trading yang ketat.
-    `;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
-   // 4. Hitung endpoint API menggunakan model gemini-1.5-flash (Free & Fast)
-const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
-console.log("VERSI URL TERBARU:", url);
+    const promptText = `Anda adalah seorang Auditor Risiko Trading Forex senior yang sangat analitis dan mengandalkan logika. Evaluasi posisi trade berikut secara kritis dan objektif:
+- Pasangan Aset: ${trade.asset}
+- Arah Posisi: ${trade.direction}
+- Entry Price: ${trade.entry}
+- Stop Loss: ${trade.sl}
+- Take Profit: ${trade.tp}
+- Status Akhir: ${trade.status}
+
+Berikan audit kritis mengenai logika di balik trade ini, rasionalitas R:R, dan kedisiplinan manajemen risiko.`;
 
     try {
         const response = await fetch(url, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
+            headers: { 
+                'Content-Type': 'application/json',
+                'x-goog-api-key': apiKey
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{ text: promptText }]
-                }]
+                contents: [{ parts: [{ text: promptText }] }]
             })
         });
 
-        const data = await response.json();
-        
-        if (data.candidates && data.candidates[0].content.parts[0].text) {
-            const aiResponse = data.candidates[0].content.parts[0].text;
-            
-            // Tampilkan hasil audit menggunakan alert bawaan terlebih dahulu untuk tes
-            alert(`--- HASIL AUDIT AI UNTUK TRADING LO, ZAN --- \n\n${aiResponse}`);
-        } else {
-            alert("Gagal mendapatkan respons valid dari Gemini. Cek kembali kevalidan API Key lo, Zan.");
-        }
+        if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
 
+        const data = await response.json();
+        const responseText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+        
+        if (responseText) {
+            alert(`=== HASIL AUDIT AI GEMINI ===\n\n${responseText}`);
+        } else {
+            throw new Error("Format respons tidak valid");
+        }
     } catch (error) {
-        console.error("Error API Gemini:", error);
-        alert("Terjadi error koneksi saat mencoba menghubungi Gemini API.");
+        console.error("Gemini API Error:", error);
+        alert("Gagal mendapatkan respons dari Gemini. Pastikan koneksi aman dan kode benar.");
     }
-}
-        // Initialize application logic on window complete load
+}        // Initialize application logic on window complete load
         window.onload = function () {
     document.getElementById('nav-username').innerText = STATE.settings.username;
     lucide.createIcons();
