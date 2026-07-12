@@ -687,9 +687,9 @@
             e.preventDefault();
             const asset = document.getElementById('trade-asset').value.toUpperCase();
             const direction = document.getElementById('trade-dir').value;
-            const entry = parseFloat(document.getElementById('trade-entry').value);
-            const sl = parseFloat(document.getElementById('trade-sl').value);
-            const tp = parseFloat(document.getElementById('trade-tp').value);
+            const entry = parseFloat(document.getElementById('trade-entry').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
+            const sl = parseFloat(document.getElementById('trade-sl').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
+            const tp = parseFloat(document.getElementById('trade-tp').value.replace(/\.(?=[^.]*\.)/g, "")) || 0;
             const status = document.getElementById('trade-status').value;
             const fundamental = document.getElementById('trade-fundamental').value;
             const confluence = document.getElementById('trade-confluence').value;
