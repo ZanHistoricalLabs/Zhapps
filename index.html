@@ -1306,8 +1306,8 @@ async function auditTradeWithAI(tradeId) {
     3. Evaluasi akhir apakah manajemen trade ini sudah disiplin atau melanggar aturan logika trading yang ketat.
     `;
 
-    // 4. Hitung endpoint API menggunakan model gemini-2.5-flash (Free & Fast)
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+    // 4. Hitung endpoint API menggunakan model gemini-1.5-flash (Free & Fast)
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
     try {
         const response = await fetch(url, {
