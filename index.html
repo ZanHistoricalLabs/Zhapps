@@ -721,7 +721,7 @@
                 calculatedLots = allowedRiskUSD / (slDistance * standardContractUnit);
             }
 
-            const profitManual = parseFloat(document.getElementById('trade-profit').value.replace(/\./g, "").replace(",", ".")) || 0;
+            const profitManual = parseFloat(document.getElementById('trade-profit').value.replace(',', '.')) || 0;
 
             const newTrade = {
                 id: Date.now(),
