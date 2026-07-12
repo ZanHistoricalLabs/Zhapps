@@ -225,32 +225,38 @@
                             </div>
                         </div>
 
-                        <!-- Row 2: Entry, Sl, Tp & automatic Risk Calculation -->
-                        <div class="grid grid-cols-1 sm:grid-cols-5 gap-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Entry Price</label>
-                                <input type="text" id="trade-entry" required placeholder="1.08500" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Stop Loss (SL)</label>
-                                <input type="text" id="trade-sl" required placeholder="1.08000" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Take Profit (TP)</label>
-                                <input type="text" id="trade-tp" required placeholder="1.09500" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Reward/Risk Ratio</label>
-                                <div id="calc-rr" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-400 font-medium">
-                                    Auto Calculating...
-                                </div>
-                                <div>
-        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">LOT SIZE</label>
-        <input type="text" id="trade-lot" placeholder="0.10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
+                        <!-- Row 2: Kolom Hijau (Entry, SL, TP) -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Entry Price</label>
+        <input type="text" id="trade-entry" required placeholder="1.08500" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-brand-500">
     </div>
     <div>
-    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">PROFIT/LOSS ($)</label>
-    <input type="text" id="trade-profit" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-brand-500">
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Stop Loss (SL)</label>
+        <input type="text" id="trade-sl" required placeholder="1.08000" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-brand-500">
+    </div>
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Take Profit (TP)</label>
+        <input type="text" id="trade-tp" required placeholder="1.09500" oninput="calculatePositionSize()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-brand-500">
+    </div>
+</div>
+
+<!-- Row 3: Kolom Ungu (Lot Size, Profit/Loss, RR) -->
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Lot Size</label>
+        <input type="text" id="trade-lot" placeholder="0.10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-brand-500">
+    </div>
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Profit/Loss ($)</label>
+        <input type="text" id="trade-profit" placeholder="0.00" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-brand-500">
+    </div>
+    <div>
+        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Reward/Risk Ratio</label>
+        <div id="calc-rr" class="w-full bg-slate-950/50 border border-slate-800/80 rounded-xl px-4 py-2.5 text-slate-400 font-medium select-none h-[46px] flex items-center">
+            Set prices...
+        </div>
+    </div>
 </div>
                             </div>
                         </div>
