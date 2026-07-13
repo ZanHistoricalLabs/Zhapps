@@ -1324,6 +1324,13 @@ Berikan audit kritis mengenai logika di balik trade ini, rasionalitas R:R, dan k
     }
 }        // Initialize application logic on window complete load
         window.onload = function () {
+        // Cek apakah ini instalasi baru (pengguna yang baru download)
+    if (!localStorage.getItem('isAppInitialized')) {
+        localStorage.clear(); // Bersihkan semua data cache/hantu bawaan
+        localStorage.setItem('isAppInitialized', 'true'); // Tandai bahwa aplikasi sudah bersih
+        location.reload(); // Refresh halaman agar mulai dengan state 0
+        return; // Hentikan proses load di bawahnya untuk sementara
+    }
     document.getElementById('nav-username').innerText = STATE.settings.username;
     lucide.createIcons();
     switchTab('dashboard');
