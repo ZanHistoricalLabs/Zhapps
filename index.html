@@ -659,9 +659,15 @@
             const direction = document.getElementById('trade-dir').value;
 
             const balUSD = parseFloat(STATE.settings.startingBalance) + STATE.trades.reduce((sum, t) => {
-            let val = parseFloat(t.profit);
-            // Logika filter: Jika trade berstatus loss, maka kurangi margin. Jika win, tambahkan.
-            return (t.status === 'LOST' || t.status === 'LOSS') ? sum - val : sum + val;
+            let val = Math.abs(parseFloat(t.profit) || 0); // Paksa angkanya absolut
+            let statusTrade = (t.status || '').toUpperCase(); // Paksa teks jadi huruf KAPITAL
+            
+            // Logika mutlak:
+            if (statusTrade === 'LOST' || statusTrade === 'LOSS') {
+                return sum - val; 
+            } else {
+                return sum + val; 
+            }
         }, 0);
             const riskPct = parseFloat(STATE.settings.riskPercentage);
             const allowedRiskUSD = balUSD * (riskPct / 100);
